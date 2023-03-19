@@ -1,10 +1,10 @@
 #include "./ULine.c"
-#include <stdio.h>
+#define IN "OUT/test.txt"
 
 int main(void)
 {
-    FILE   *fp      = fopen("./test.txt", "r");
-    FILE   *out     = fopen("./o.txt", "w+");
+    FILE   *fp      = fopen(IN, "r");
+    FILE   *out     = fopen("OUT/o.txt", "w+");
     size_t linecount = 0;
     ULine  lines[100];
     
@@ -26,17 +26,18 @@ int main(void)
     }
         
     // Reading all the line with Numbers
-    int c = ReadLinesNumbered(fp, lines, " -> ", &linecount);
+    int c = ULine_read_lines_from_stream(fp, lines, &linecount);
+    
     printf("read %zu lines !!\n", linecount);
     
     // printing.
-    
     for(; linecount > 0; linecount--)
     {
-	ULineDumpLine(out, &lines[linecount - 1]);
+	printf("%zu -> %s", lines[linecount - 1].index, lines[linecount - 1].lineBuffer);
+	// ULine_dump_line_into_stream(stdout, &lines[linecount - 1]);
+
     }
    
-//    free(lines);
     fclose(fp);
     fclose(out);
     return 0;

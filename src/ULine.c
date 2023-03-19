@@ -11,25 +11,37 @@
 typedef struct ULine {
     char      lineBuffer[MAX_LINE_LENGTH];
     size_t    size;
+    size_t    index;
 } ULine;
 
-void    ULine_info(ULine *l);
-size_t  ULine_append(ULine *l, char *buff);
-int 	ULineReadFromStream(FILE *Stream, ULine *l);
-int 	ULineDumpLine(FILE *Stream, ULine *l);
-int     convNum(size_t Num, ULine *l);
-size_t  Linecat(ULine *src, ULine *dst);
-int     ReadLines(FILE *Stream, ULine *Lines, size_t *readCounter);
-int     ReadLinesNumbered(FILE *Stream, ULine *Lines, char *sep, size_t *readCounter);
+/* ------------ Definition ------------------ */
 
-size_t Linecat(ULine *src, ULine *dst)
+// Readers.
+void    ULine_log(ULine *l);
+int 	ULine_read_line_from_stream(FILE *Stream, ULine *l);
+int     ULine_read_lines_from_stream(FILE *Stream, ULine *Lines, size_t *read);
+
+// Writers.
+size_t  ULine_write(ULine *l, char *buff);
+int 	ULine_dump_line_into_stream(FILE *Stream, ULine *l);
+
+// Reader + writer.
+size_t  ULine_concat(ULine *src, ULine *dst);
+
+// Util
+int ULine_iota(size_t i, char *a);
+
+/* ------------------------------------------- */
+
+/* ------------ Implementation ------------------ */
+size_t  ULine_concat(ULine *src, ULine *dst)
 {
     strcat(src->lineBuffer, dst->lineBuffer);
     src->size += dst->size;
     return src->size;
 }
 
-size_t ULine_append(ULine *l, char *buff) {
+size_t ULine_write(ULine *l, char *buff) {
     size_t length = strlen(buff);
 
     assert((length < MAX_LINE_LENGTH) && "SIZE OF THE BUFFER IS BIGGER THAN 512 BYTES!");
@@ -43,26 +55,26 @@ size_t ULine_append(ULine *l, char *buff) {
     return l->size;
 }
 
-void ULine_info(ULine *l) {
+void ULine_log(ULine *l) {
     printf("Line: %s\n", l->lineBuffer);
     printf("Size: %zu\n", l->size);
 }
 // Read Line By line.
-int ULineReadFromStream(FILE *Stream, ULine *l)
+int ULine_read_line_from_stream(FILE *Stream, ULine *l)
 {
     l->size = 0;
     int c;
-
+    
     while(((c = fgetc(Stream)) != EOF) && ((char)c != NL)){
 	l->lineBuffer[l->size++] = (char)c;
     }
-    
+
     l->lineBuffer[l->size++] = NL;
     
     return c;
 }
 
-int ULineDumpLine(FILE *Stream, ULine *l) {
+int ULine_dump_line_into_stream(FILE *Stream, ULine *l) {
     if(Stream != NULL){
 	fprintf(Stream, l->lineBuffer);
 	return 0;
@@ -71,59 +83,31 @@ int ULineDumpLine(FILE *Stream, ULine *l) {
     return 1;
 }
 
-int convNum(size_t Num, ULine *l)
+int ULine_iota(size_t i, char *a)
 {
-    int length = snprintf(NULL, 0, "%zu", Num);
-    snprintf(&(l->lineBuffer[0]), length + 1, "%zu", Num);
-    l->size += length;
+    int length = snprintf(NULL, 0, "%zu", i);
+    snprintf(a, length + 1, "%zu", i);
     return length;
 }
 
 // read an array of lines. but the problem here you need to allocate mem for the lines that you want to read. then assign the mem to *Lines so they can be stored there.. 
-int ReadLinesNumbered(FILE *Stream, ULine *Lines, char *sep, size_t *readCounter)
+int ULine_read_lines_from_stream(FILE *Stream, ULine *Lines, size_t *read)
 {
-    if(*readCounter != 0)
-    {
-	*readCounter = 0;
-    }
-
+    size_t Count = 0;
     ULine  tmp 	 = { 0 };
     int c;
-    size_t sep_size = strlen(sep);
-    
-    while((c = ULineReadFromStream(Stream, &tmp)) != EOF) 
+
+    while((c = ULine_read_line_from_stream(Stream, &tmp)) != EOF) 
     {
-	ULine  line  = { 0 };		
-	//printf("Read loop!\n");
-	convNum(*readCounter, &line); // Convert the number to its char repr.
-	
-	for(size_t j = 0; j < sep_size ; j++){
-	    line.lineBuffer[line.size++] = sep[j]; // Add sep.
-	}
-	
-	Linecat(&line, &tmp);
 	// Assign the line.
-	Lines[*readCounter] = line;
-	
-	(*readCounter)++; // Next.
-    }
-
-
-    return c;
-}
-
-int ReadLines(FILE *Stream, ULine *Lines, size_t *readCounter)
-{
-    if(*readCounter != 0) *readCounter = 0;
-
-    ULine  tmp 	 = { 0 };
-    int c = 0;
-
-    while((c = ULineReadFromStream(Stream, &tmp)) != EOF) 
-    {
-	Lines[(*readCounter)++] = tmp;
+	tmp.index   = Count;
+	Lines[Count] = tmp;
+	Count++; // Next.
     }
     
+    *read = Count;
     return c;
 }
+
+/* ------------------------------------------- */
 
