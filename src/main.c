@@ -1,30 +1,28 @@
-#include "./ULine.c"
+#include "ULine.c"
 #define IN "OUT/test.txt"
 
 int main(void)
 {
-    Line src = {
-	.content="Hello",
-	.size=5,
-    }; 
-
-    Line dst = {
-	.content=" World",
-	.size=6,
-    };
-
-    concat(&src, &dst);
-    printf("%s", src.content);
+    FILE *f   = fopen(IN, "r");
+    size_t length = 0;
     
-    Line dst_ = {
-	.content=" WeZDS",
-	.size=6,
-    };
+    if(f == NULL)
+    {
+	printf("could not open the file %s\n", IN);
+	fclose(f);
+	return 1;
+    }
 
-    concat(&src, &dst_);
-    printf("%s", src.content);
+    Line *lines = read_lines_from_stream_dyn(f, &length);
     
-     return  0;
+    printf("READ: %d\n", length);
+    
+    for(; length > 0; length--) printf("%s\n", lines[length - 1].content);
+
+    
+
+    fclose(f);
+    return  0;
 }
 
 int Line_TEST(void)
