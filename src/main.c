@@ -3,10 +3,36 @@
 
 int main(void)
 {
+    Line src = {
+	.content="Hello",
+	.size=5,
+    }; 
+
+    Line dst = {
+	.content=" World",
+	.size=6,
+    };
+
+    concat(&src, &dst);
+    printf("%s", src.content);
+    
+    Line dst_ = {
+	.content=" WeZDS",
+	.size=6,
+    };
+
+    concat(&src, &dst_);
+    printf("%s", src.content);
+    
+     return  0;
+}
+
+int Line_TEST(void)
+{
     FILE   *fp      = fopen(IN, "r");
     FILE   *out     = fopen("OUT/o.txt", "w+");
     size_t linecount = 0;
-    ULine  lines[100];
+    Line  lines[100];
     
     printf("%zu kb allocated.\n", (sizeof lines * 100) / 1024);
 
@@ -16,7 +42,7 @@ int main(void)
 	{
 	    lines[i].size = 0;
 	}
-	// printf("%p  |  %i  |  %p\n", &lines[i], lines[i].size, lines[i].lineBuffer);
+	// printf("%p  |  %i  |  %p\n", &lines[i], lines[i].size, lines[i].content);
     }
 
     if(fp == NULL) {
@@ -26,15 +52,15 @@ int main(void)
     }
         
     // Reading all the line with Numbers
-    int c = ULine_read_lines_from_stream(fp, lines, &linecount);
+    int c = read_lines_from_stream(fp, lines, &linecount);
     
     printf("read %zu lines !!\n", linecount);
     
     // printing.
     for(; linecount > 0; linecount--)
     {
-	printf("%zu -> %s", lines[linecount - 1].index, lines[linecount - 1].lineBuffer);
-	// ULine_dump_line_into_stream(stdout, &lines[linecount - 1]);
+	printf("%zu -> %s", lines[linecount - 1].index, lines[linecount - 1].content);
+	// dump_line_into_stream(stdout, &lines[linecount - 1]);
 
     }
    
