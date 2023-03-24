@@ -19,8 +19,6 @@ int main(void)
     
     for(; length > 0; length--) printf("%s\n", lines[length - 1].content);
 
-    
-
     fclose(f);
     return  0;
 }

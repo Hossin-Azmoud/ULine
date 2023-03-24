@@ -18,7 +18,7 @@ typedef struct Line {
 // Readers.
 void    line_log(Line *l);
 int	read_line_from_stream(FILE *Stream, Line *l);
-int     read_lines_from_stream(FILE *Stream, Line *Lines, size_t *read);
+int     read_lines_from_stream(FILE *Stream, Line *Lines, size_t *read, size_t end);
 Line    *read_lines_from_stream_dyn(FILE *Stream, size_t *read);
 
 // Writers.

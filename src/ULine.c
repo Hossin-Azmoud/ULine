@@ -152,7 +152,7 @@ int iota(size_t i, char *a)
 }
 
 // read an array of lines. but the problem here you need to allocate mem for the lines that you want to read. then assign the mem to *Lines so they can be stored there.. 
-int read_lines_from_stream(FILE *Stream, Line *Lines, size_t *read)
+int read_lines_from_stream(FILE *Stream, Line *Lines, size_t *read, size_t end)
 {
     size_t Count = 0;
     Line  tmp	 = { 0 };
@@ -160,8 +160,10 @@ int read_lines_from_stream(FILE *Stream, Line *Lines, size_t *read)
 
     while((c = read_line_from_stream(Stream, &tmp)) != EOF) {
 	// Assign the line.
+	
 	tmp.index    = Count;
 	Lines[Count++] = tmp;
+	if(Count == end) break;
     }
     
     *read = Count;
