@@ -18,7 +18,7 @@ Line AllocLine(size_t capacity)
     
     if(capacity > 0)
     {	
-	char *tmp    = (char *) malloc(capacity);
+	char *tmp    = (char *) malloc(capacity + 1);
 
 	line.size    = 0;
 	line.cap     = capacity;
@@ -29,6 +29,21 @@ Line AllocLine(size_t capacity)
     return line;
 }
 
+Lines AllocLines(size_t capacity, size_t count)
+{
+    Lines lines = { 0 };
+    lines.cap   = count;
+    lines.start = malloc(sizeof(Line) * count);
+    
+    for(;count > 0; count--)
+    {
+	lines.start[count - 1] = AllocLine(capacity);
+	lines.size++;
+    }
+
+    lines.end = (lines.start + lines.size - 1);
+    return lines;
+}
 
 void memcheck(Line *l, size_t offset, bool movebuff) {
     

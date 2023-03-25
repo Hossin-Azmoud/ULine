@@ -13,6 +13,14 @@ typedef struct Line {
     size_t    cap;
 } Line;
 
+typedef struct Lines {
+    Line *start;
+    size_t cap;
+    size_t size;
+
+    Line *end;
+} Lines;
+
 // TODO: TEST.
 
 // Readers.
@@ -24,17 +32,19 @@ Line    *read_lines_from_stream_dyn(FILE *Stream, size_t *read);
 // Writers.
 size_t  write_into_line(Line *l, char *buff);
 int 	dump_line_into_stream(FILE *Stream, Line *l);
-
 size_t  Uline_write_buff_into(Line *l, char *data);
 bool    Uline_write_byte_into(Line *l, char byte, bool term);
 
 // Reader + writer.
 size_t  concat(Line *src, Line *dst);
+Line    linecp(Line *src);
 
 // Util
 int  iota(size_t i, char *a); // converts Int -> ascii
 void memcheck(Line *l, size_t offset, bool movebuff); // check if the allocated mem in Line->content
-Line AllocLine(size_t capacity);
+
+Line  AllocLine(size_t capacity);
+Lines AllocLines(size_t capacity, size_t count);
 void terminate(char *buff, size_t index);
 
 #endif // ULINE_IMPL
