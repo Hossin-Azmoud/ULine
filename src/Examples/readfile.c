@@ -1,8 +1,11 @@
+#include <errno.h>
 #include "../ULine.c"
 #define IN "OUT/test.txt"
 
 int READ_FILELINES(FILE *STREAM);
 int READ_FILELINES_DYN(FILE *STREAM);
+void logErrno();
+
 // void freset(FILE *STREAM);
 
 
@@ -22,6 +25,13 @@ int main(void)
     
     fclose(f);
     return 0;
+}
+
+void logErrno()
+{
+    printf("Code : %d\n",errno);
+    printf(": %s\n",strerror(errno));
+    perror("Message from perror");
 }
 
 int READ_FILELINES(FILE *STREAM)
