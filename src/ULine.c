@@ -6,6 +6,16 @@
 #include <stdbool.h>
 #include "ULine.h"
 
+void report_read(Line line)
+{
+    printf("---------------------------------------\n");
+    
+    printf("READ: %zu\n", line.size);
+    
+    printf("---------------------------------------\n");
+}
+
+
 size_t concat(Line *src, Line *dst) 
 {
     size_t s = Uline_write_buff_into(src, dst->content);
@@ -29,21 +39,6 @@ Line AllocLine(size_t capacity)
     return line;
 }
 
-Lines AllocLines(size_t capacity, size_t count)
-{
-    Lines lines = { 0 };
-    lines.cap   = count;
-    lines.start = malloc(sizeof(Line) * count);
-    
-    for(;count > 0; count--)
-    {
-	lines.start[count - 1] = AllocLine(capacity);
-	lines.size++;
-    }
-
-    lines.end = (lines.start + lines.size - 1);
-    return lines;
-}
 
 void memcheck(Line *l, size_t offset, bool movebuff) {
     
@@ -78,12 +73,12 @@ void terminate(char *buff, size_t index)
 
 bool Uline_write_byte_into(Line *l, char byte, bool term)
 {
+
     memcheck(l, 1, true); // Check if buffer is enough for the incoming bytes.
+    l->content[l->size] = byte;
     
-    l->content[l->size++]     = byte;
-    
+    l->size++;
     if(term) terminate(l->content, l->size);
-    
     return true;
 }
 
@@ -129,17 +124,13 @@ void line_log(Line *l) {
 // Read Line By line.
 int read_line_from_stream(FILE *Stream, Line *l)
 {
-    
-    memcheck(l, DEFAULT_LINE_CAP, false);
 
     int c;
-    
-    while(((c = fgetc(Stream)) != EOF) && ((char)c != EOL)){
+    while(((c = fgetc(Stream)) != EOF) && ((char) c != EOL)){
 	Uline_write_byte_into(l, (char) c, false);
     }
     
     terminate(l->content, l->size);
-
     return c;
 }
 /*
@@ -151,6 +142,7 @@ size_t refill(Line *line,char *buff)
 }
 */
 int dump_line_into_stream(FILE *Stream, Line *l) {
+    
     if(Stream != NULL){
 	fprintf(Stream, l->content);
 	return 0;
@@ -185,7 +177,6 @@ int read_lines_from_stream(FILE *Stream, Line *Lines, size_t *read, size_t end)
     return c;
 }
 
-/* ------------------------------------------- */
 Line *read_lines_from_stream_dyn(FILE *Stream, size_t *read)
 { 
     size_t s        = sizeof(Line) * DEFAULT_LINE_COUNT;
@@ -213,3 +204,56 @@ Line *read_lines_from_stream_dyn(FILE *Stream, size_t *read)
     return Lines;
 }
 
+Lines AllocLines(size_t capacity, size_t count)
+{
+    Lines lines = { 0 };
+    lines.cap   = count;
+    lines.line_list = malloc(sizeof(Line) * count);
+    
+    for(;count > 0; count--)
+    {
+	lines.line_list[count - 1] = AllocLine(capacity);
+    }
+
+    return lines;
+}
+
+int dump_lines(FILE *Stream, Lines *lines)
+{
+    if(Stream == NULL)
+    {
+	return 1;
+    }
+    
+    for(int i = 0; i < lines->size; i++)
+    {
+	dump_line_into_stream(Stream, &(lines->line_list[i]));
+    }
+}
+
+Lines read_lines(FILE *Stream, size_t amount)
+{
+    int code    = 0;
+    Lines lines = AllocLines(DEFAULT_LINE_CAP, amount);
+    lines.cap   = amount;
+    
+    printf("(size: %zu), (Am: %zu)\n", lines.size, amount);
+
+    for(; lines.size < amount; lines.size++)
+    {
+	if(code == EOF)
+	{
+	    printf("EOF (%i) == (%i) ", code, EOF);
+	    break;
+	}
+
+	Line tmp = AllocLine(DEFAULT_LINE_CAP);
+	code = read_line_from_stream(Stream, &tmp);
+	report_read(tmp);
+	lines.line_list[lines.size] = tmp;
+    }
+    
+    printf("(size: %zu), (Am: %zu)\n", lines.size, amount);
+    
+    return lines;
+}

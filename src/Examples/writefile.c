@@ -3,19 +3,24 @@
 #include "../ULine.c"
 #define OUT "OUT/o.txt"
 #define MAX 20
-#define SEP '!'
 
-void tell(char sep, char *msg)
-{
-    printf("[%c] %s", sep, msg);
-}
+/* An example on how you can add characters to the lines using
+ * Uline_write_byte_into(line_ref, char, termination_flag)
+ * and how to dump the lines into a file using dump_line_into_stream(stream, line_ref)
+ * also I have used a func to allocate me a line. which is AllocLine(size), size is the size of the line we are going to create.
+ * 
+ * */
 
 int main()
 {
     FILE *f      = fopen(OUT, "w+");    
+    if(f == NULL)
+    {
+	printf("Error opening the file!");
+	return 1;
+    }
     size_t start = 48;
     size_t end   = 200;
-    tell(SEP, "Starting\n"); 
     
     for(int i = 0; i < MAX; i++)
     {
@@ -36,6 +41,8 @@ int main()
 	}
 	
     }
+    
+    fclose(f);
     
     return 0;
 }
