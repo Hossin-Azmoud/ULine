@@ -10,13 +10,13 @@ void NOT_IMPLEMENTED(void)
 
 } 
    
-int    load_all(FILE *Stream, Chunks *chunks)
+int load_all(FILE *Stream, Chunks *chunks)
 {  
     NOT_IMPLEMENTED();
     return 0;  
 }  
 
-int    chunks_dump(FILE *Stream, Chunks *chunks)
+int chunks_dump(FILE *Stream, Chunks *chunks)
 {  
     NOT_IMPLEMENTED();
     return 0;  
@@ -34,13 +34,15 @@ Chunks allocChunks(size_t cap, size_t amount)
 
 int load(FILE *Stream, Chunk *chunk)
 {
-   int byte; 
-   while((byte = fgetc(Stream) != EOF) && chunk->size < chunk->cap) 
-   {
-	chunk->bytes[chunk->size++];		
-   }
+    if(chunk->size != 0) chunk->size = 0;
+    int byte;
+    
+    while(((byte = fgetc(Stream)) != EOF) && chunk->size < chunk->cap)
+    {
+	chunk->bytes[chunk->size++] = (char) byte;
+    } 
 
-   return byte;
+    return byte;
 }
 
 int chunk_dump(FILE *Stream, Chunk *chunk)
@@ -64,7 +66,7 @@ Chunk allocChunk(size_t cap)
 
     Chunk chunk = { 0 };
     chunk.cap   = cap;
-    chunk.bytes = (int *) malloc(sizeof(int) * cap);
+    chunk.bytes = (char *) malloc(sizeof(int) * cap);
     return chunk;
 }
 

@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 typedef struct Chunk {
-    int    *bytes;
+    char    *bytes;
     size_t size;
     size_t cap;
 } Chunk;
@@ -32,6 +32,5 @@ int    chunks_dump(FILE *Stream, Chunks *chunks);
 // Allocators. 
 Chunk  allocChunk(size_t cap);
 Chunks allocChunks(size_t cap, size_t amount);
-
 
 #endif // CHUNK_H
