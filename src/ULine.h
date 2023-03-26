@@ -35,7 +35,6 @@ size_t  Uline_write_buff_into(Line *l, char *data);
 bool    Uline_write_byte_into(Line *l, char byte, bool term);
 int     dump_lines(FILE *Stream, Lines *lines);
 
-
 // Reader + writer.
 size_t  concat(Line *src, Line *dst);
 Line    linecp(Line *src);
