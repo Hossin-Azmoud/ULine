@@ -170,7 +170,8 @@ int iota(int i, char *a)
     return length;
 }
 
-int iotaf(float f, char *a)
+
+int  fota(float f, char *a)
 {
     int length = snprintf(NULL, 0, "%f", f);
     snprintf(a, length + 1, "%f", f);

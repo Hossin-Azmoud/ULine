@@ -47,7 +47,7 @@ int main(void)
     // printf("%s\n", a);
     check(a, length);
 
-    length = iotaf(0.5, a); // .5 -> "0.500000\0"
+    length = fota(0.5, a); // .5 -> "0.500000\0"
     // printf("%s\n", a);
     check(a, length);
     
@@ -59,7 +59,8 @@ int main(void)
     checkl(&l);
     l = AllocLine(0); // Allocate line with the defualt line cap: 32 
     checkl(&l);
-
+    
+    
 
     return 0;
 }
