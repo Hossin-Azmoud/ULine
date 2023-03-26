@@ -24,22 +24,33 @@ size_t concat(Line *src, Line *dst)
 
 Line AllocLine(size_t capacity)
 {
-    Line line = { 0 };
-    
-    if(capacity > 0)
-    {	
-	char *tmp    = (char *) malloc(capacity + 1);
-
-	line.size    = 0;
-	line.cap     = capacity;
-	
-	line.content = tmp;
+    if(capacity == 0){
+	capacity = DEFAULT_LINE_CAP;
     }
+
+    Line line = { 0 };
+    char *tmp    = (char *) malloc(capacity + 1);
+    line.size    = 0;
+    line.cap     = capacity;
+    line.content = tmp;
 
     return line;
 }
 
+void memcheck_rea(Line *l, size_t offset, bool movebuff)
+{
+    if(!movebuff)
+    {
+	*l = AllocLine(l->size + offset);
+	return;
+    }
 
+    if(l->cap < (l->size + offset)) {
+	size_t bytes_to_Alloc = (l->cap + DEFAULT_LINE_CAP);
+	l->content            = (char *) realloc(l->content, bytes_to_Alloc);
+	l->cap += DEFAULT_LINE_CAP;
+    }
+}
 void memcheck(Line *l, size_t offset, bool movebuff) {
     
     if(!movebuff)
@@ -54,7 +65,7 @@ void memcheck(Line *l, size_t offset, bool movebuff) {
 	size_t bytes_to_Alloc = (l->cap + DEFAULT_LINE_CAP);
 	char *tmp             = (char *) malloc(bytes_to_Alloc);
 
-	if(l->size > 0 && movebuff) {
+	if(l->size > 0) {
 	    for(; i < l->size; i++)
 	    {
 		tmp[i] = l->content[i];
@@ -136,7 +147,7 @@ int read_line_from_stream(FILE *Stream, Line *l)
 /*
 size_t refill(Line *line,char *buff)
 {
-    size_t n = strlen(buff);
+size_t n = strlen(buff);
     memcheck();
     return 
 }
@@ -151,13 +162,22 @@ int dump_line_into_stream(FILE *Stream, Line *l) {
     return 1;
 }
 
-int iota(size_t i, char *a)
+int iota(int i, char *a)
 {
-    int length = snprintf(NULL, 0, "%zu", i);
-    snprintf(a, length + 1, "%zu", i);
+    int length = snprintf(NULL, 0, "%i", i);
+    snprintf(a, length + 1, "%i", i);
+    terminate(a, length);
     return length;
 }
 
+int iotaf(float f, char *a)
+{
+    int length = snprintf(NULL, 0, "%f", f);
+    snprintf(a, length + 1, "%f", f);
+    terminate(a, length);
+    return length;
+}
+// converts Int -> ascii
 // read an array of lines. but the problem here you need to allocate mem for the lines that you want to read. then assign the mem to *Lines so they can be stored there.. 
 int read_lines_from_stream(FILE *Stream, Line *Lines, size_t *read, size_t end)
 {
@@ -249,7 +269,6 @@ Lines read_lines(FILE *Stream, size_t amount)
 
 	Line tmp = AllocLine(DEFAULT_LINE_CAP);
 	code = read_line_from_stream(Stream, &tmp);
-	report_read(tmp);
 	lines.line_list[lines.size] = tmp;
     }
     
