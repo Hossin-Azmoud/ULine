@@ -1,5 +1,37 @@
 #include "chunk.h"
 
+// TODO int    load_all(FILE *Stream, Chunks *chunks); 
+// TODO Chunks allocChunks(size_t cap, size_t amount); 
+// TODO int    chunks_dump(FILE *Stream, Chunks *chunks); 
+
+void NOT_IMPLEMENTED(void)
+{
+    printf("%s IS NOT NOT IMPLEMENTED", __func__);
+
+} 
+   
+int    load_all(FILE *Stream, Chunks *chunks)
+{  
+    NOT_IMPLEMENTED();
+    return 0;  
+}  
+
+int    chunks_dump(FILE *Stream, Chunks *chunks)
+{  
+    NOT_IMPLEMENTED();
+    return 0;  
+}
+       
+/*
+Chunks allocChunks(size_t cap, size_t amount)
+{  
+    NOT_IMPLEMENTED();
+    return 0;  
+}  
+ */ 
+       
+  
+
 int load(FILE *Stream, Chunk *chunk)
 {
    int byte; 
