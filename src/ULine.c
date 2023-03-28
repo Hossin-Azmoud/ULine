@@ -51,6 +51,7 @@ void memcheck_rea(Line *l, size_t offset, bool movebuff)
 	l->cap += DEFAULT_LINE_CAP;
     }
 }
+
 void memcheck(Line *l, size_t offset, bool movebuff) {
     
     if(!movebuff)
