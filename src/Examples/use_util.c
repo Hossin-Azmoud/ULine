@@ -55,15 +55,14 @@ int main(void)
     
     // Line allocation.
     
-    Line l = AllocLine(20); // Allocate A line struct that can fit 20 charcters.
-    checkl(&l);
+    Line *l = AllocLine(20); // Allocate A line struct that can fit 20 charcters.
+    checkl(l);
     l = AllocLine(100); // Allocate line with capacity of 100 characters.
-    checkl(&l);
+    checkl(l);
     l = AllocLine(0); // Allocate line with the defualt line cap: 32 
-    checkl(&l);
     
+	checkl(l);
     
-
     return 0;
 }
 

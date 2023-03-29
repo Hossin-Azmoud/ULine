@@ -1,7 +1,7 @@
 #include "chunk.h"
 
 // TODO int    load_all(FILE *Stream, Chunks *chunks); 
-// TODO Chunks allocChunks(size_t cap, size_t amount); 
+// TODO Chunks AllocChunks(size_t cap, size_t amount); 
 // TODO int    chunks_dump(FILE *Stream, Chunks *chunks); 
 
 void NOT_IMPLEMENTED(void)
@@ -28,7 +28,7 @@ Chunks *load_all(FILE *Stream)
 	size_t chunkAmount = (q / CHUNK_SIZE) + ((rem != 0) ? 1 : 0);
 		
 	printf("Alloc chunks: %zu\n", chunkAmount);
-	Chunks *chunks = allocChunks(0, chunkAmount);
+	Chunks *chunks = AllocChunks(0, chunkAmount);
 	
 	int code;
 
@@ -76,7 +76,7 @@ int chunks_dump(FILE *Stream, Chunks *chunks)
 
 /*
 
-Chunks allocChunks(size_t cap, size_t amount)
+Chunks AllocChunks(size_t cap, size_t amount)
 {  
     NOT_IMPLEMENTED();
     return 0;  
@@ -96,7 +96,7 @@ long get_file_size(FILE *Stream)
 Chunk load_chunk(FILE *Stream)
 {    
 
-    Chunk *chunk = allocChunk(0);
+    Chunk *chunk = AllocChunk(0);
     
     size_t size = fread(chunk->bytes, 1, chunk->cap, Stream);
     chunk->size = size;
@@ -129,7 +129,7 @@ void report_usage(Chunk *chunk)
     printf("[!] used chunk capacity: %zu\n", chunk->cap);
 }
 
-Chunk *allocChunk(size_t cap)
+Chunk *AllocChunk(size_t cap)
 {
     if(cap == 0)
     {
@@ -149,7 +149,7 @@ Chunk *allocChunk(size_t cap)
 
 }
 
-Chunks *allocChunks(size_t cap, size_t amount)
+Chunks *AllocChunks(size_t cap, size_t amount)
 {
 	// So chunks is empty from garbage values
 	

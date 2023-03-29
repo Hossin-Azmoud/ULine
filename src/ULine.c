@@ -1,14 +1,48 @@
 #include "ULine.h"
 
-
-void map(Lines *lines, void (*f)(Line*))
+void Lines_map(Lines *lines, void (*f)(Line*))
 {
 	for(size_t i = 0; i < lines->cap; i++)
 	{
-		Line *l = (lines->line_list + i);		
+		Line *l = (lines->line_list + i);
 		f(l);
 	}
 }
+
+void Line_map(Line *line, void (*f)(char))
+{
+	for(size_t i = 0; i < line->cap; i++)
+	{
+		char c = *(line->content + i);
+		f(c);
+	}
+}
+
+void FillLines(Lines *lines, char c)
+{	
+	// Hand the func to map.
+	void fillLine(Line *line) 
+	{
+		// Fill with char c and terminate.
+		for(size_t it = 0; it < line->cap; it++)
+		{
+			line->content[it] = c;
+			line->size++;
+		}
+
+		terminate(line->content, line->size);
+	}
+	
+	Lines_map(lines, fillLine);
+}
+/*
+char **Split(Line *line, char Token)
+{
+	char *out = malloc();
+	
+	return out;
+}
+*/
 
 void report_read(Line line)
 {
@@ -19,24 +53,22 @@ void report_read(Line line)
     printf("---------------------------------------\n");
 }
 
-
 size_t concat(Line *src, Line *dst) 
 {
     size_t s = Uline_write_buff_into(src, dst->content);
     return s;
 }
 
-Line AllocLine(size_t capacity)
+Line *AllocLine(size_t capacity)
 {
     if(capacity == 0){
 		capacity = DEFAULT_LINE_CAP;
     }
 
-    Line line = { 0 };
-    char *tmp    = (char *) malloc(capacity + 1);
-    line.size    = 0;
-    line.cap     = capacity;
-    line.content = tmp;
+    Line *line    = calloc(1, sizeof(Line));
+    line->size    = 0;
+    line->cap     = capacity;
+    line->content = (char *) malloc(capacity + 1);
 
     return line;
 }
@@ -45,14 +77,14 @@ void memcheck_rea(Line *l, size_t offset, bool movebuff)
 {
     if(!movebuff)
     {
-	*l = AllocLine(l->size + offset);
-	return;
+		*l = *AllocLine(l->size + offset);
+		return;
     }
 
     if(l->cap < (l->size + offset)) {
-	size_t bytes_to_Alloc = (l->cap + DEFAULT_LINE_CAP);
-	l->content            = (char *) realloc(l->content, bytes_to_Alloc);
-	l->cap += DEFAULT_LINE_CAP;
+		size_t bytes_to_Alloc = (l->cap + DEFAULT_LINE_CAP);
+		l->content            = (char *) realloc(l->content, bytes_to_Alloc);
+		l->cap += DEFAULT_LINE_CAP;
     }
 }
 
@@ -60,25 +92,25 @@ void memcheck(Line *l, size_t offset, bool movebuff) {
     
     if(!movebuff)
     {
-	*l = AllocLine(l->size + offset);
-	return;
+		*l = *AllocLine(l->size + offset);
+		return;
     }
 
     if(l->cap < (l->size + offset)) {
 	
-	size_t i              = 0;
-	size_t bytes_to_Alloc = (l->cap + DEFAULT_LINE_CAP);
-	char *tmp             = (char *) malloc(bytes_to_Alloc);
+		size_t i              = 0;
+		size_t bytes_to_Alloc = (l->cap + DEFAULT_LINE_CAP);
+		char *tmp             = (char *) malloc(bytes_to_Alloc);
 
-	if(l->size > 0) {
-	    for(; i < l->size; i++)
-	    {
-		tmp[i] = l->content[i];
-	    }
-	}
-	
-	l->content = tmp;
-	l->cap += DEFAULT_LINE_CAP;
+		if(l->size > 0) {
+			for(; i < l->size; i++)
+			{
+				tmp[i] = l->content[i];
+			}
+		}
+		
+		l->content = tmp;
+		l->cap += DEFAULT_LINE_CAP;
     }
 }
 
@@ -91,11 +123,14 @@ bool Uline_write_byte_into(Line *l, char byte, bool term)
 {
 
     memcheck(l, 1, true); // Check if buffer is enough for the incoming bytes.
-    l->content[l->size] = byte;
+    
+	l->content[l->size] = byte;
     
     l->size++;
-    if(term) terminate(l->content, l->size);
-    return true;
+    
+	if(term) terminate(l->content, l->size);
+
+	return true;
 }
 
 size_t  Uline_write_buff_into(Line *l, char *data)
@@ -106,13 +141,13 @@ size_t  Uline_write_buff_into(Line *l, char *data)
 
     if(n > 0)
     {
-	// DEFAULT_LINE_CAP
-	for(size_t j = 0; j < n; j++)
-	{
-	    l->content[l->size++] = data[j];
-	}
+		// DEFAULT_LINE_CAP
+		for(size_t j = 0; j < n; j++)
+		{
+			l->content[l->size++] = data[j];
+		}
 
-	terminate(l->content, l->size);
+		terminate(l->content, l->size);
     }
 
     return l->size;
@@ -125,7 +160,7 @@ size_t write_into_line(Line *l, char *buff) {
     
     for(; it < length; it++)
     {
-	l->content[l->size++] = buff[it];
+ 		l->content[l->size++] = buff[it];
     }
 
     return l->size;
@@ -160,8 +195,8 @@ size_t n = strlen(buff);
 int dump_line_into_stream(FILE *Stream, Line *l) {
     
     if(Stream != NULL){
-	fprintf(Stream, l->content);
-	return 0;
+		fprintf(Stream, l->content);
+		return 0;
     }
     
     return 1;
@@ -192,11 +227,10 @@ int read_lines_from_stream(FILE *Stream, Line *Lines, size_t *read, size_t end)
     int c;
 
     while((c = read_line_from_stream(Stream, &tmp)) != EOF) {
-	// Assign the line.
-	
-	tmp.index    = Count;
-	Lines[Count++] = tmp;
-	if(Count == end) break;
+	// Assign the line.		
+		tmp.index    = Count;
+		Lines[Count++] = tmp;
+		if(Count == end) break;
     }
     
     *read = Count;
@@ -221,8 +255,8 @@ Line *read_lines_from_stream_dyn(FILE *Stream, size_t *read)
 	    Lines = (Line *) realloc(Lines, s);
 	}
 
-	tmp.index      = Count;
-	Lines[Count++] = tmp;
+		tmp.index      = Count;
+		Lines[Count++] = tmp;
     }
     
     *read = Count;
@@ -230,15 +264,17 @@ Line *read_lines_from_stream_dyn(FILE *Stream, size_t *read)
     return Lines;
 }
 	
-Lines AllocLines(size_t capacity, size_t count)
+Lines *AllocLines(size_t capacity, size_t count)
 {
-    Lines lines = { 0 };
-    lines.cap   = count;
-    lines.line_list = malloc(sizeof(Line) * count);
+
+    Lines *lines = calloc(1, sizeof(Lines));
+    lines->cap   = count;
+    lines->line_list = malloc(sizeof(Line) * count);
     
     for(;count > 0; count--)
     {
-	lines.line_list[count - 1] = AllocLine(capacity);
+		lines->line_list[count - 1] = *AllocLine(capacity);
+
     }
 
     return lines;
@@ -262,7 +298,7 @@ int dump_lines(FILE *Stream, Lines *lines)
 Lines read_lines(FILE *Stream, size_t amount)
 {
     int code    = 0;
-    Lines lines = AllocLines(DEFAULT_LINE_CAP, amount);
+    Lines lines = *AllocLines(DEFAULT_LINE_CAP, amount);
     lines.cap   = amount;
     
     printf("(size: %zu), (Am: %zu)\n", lines.size, amount);
@@ -275,7 +311,7 @@ Lines read_lines(FILE *Stream, size_t amount)
 	    break;
 	}
 
-	Line tmp = AllocLine(DEFAULT_LINE_CAP);
+	Line tmp = *AllocLine(DEFAULT_LINE_CAP);
 	code = read_line_from_stream(Stream, &tmp);
 	lines.line_list[lines.size] = tmp;
     }

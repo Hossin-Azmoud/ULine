@@ -25,18 +25,18 @@ int main()
     
     for(int i = 0; i < MAX; i++)
     {
-		Line line = AllocLine(end - start);
+		Line *line = AllocLine(end - start);
 
 		for(size_t j = start; j < end; j++)
 		{
 			 Uline_write_byte_into(
-				&line,
+				line,
 				(char) j,
 				(j == end - 1)
 			);
 		}
 
-		if(dump_line_into_stream(f, &line) == 0)
+		if(dump_line_into_stream(f, line) == 0)
 		{
 			printf("[*] wrote.. %zu bytes into %s, with the index %i\n", end - start, OUT, i);
 		}
@@ -47,13 +47,3 @@ int main()
     
     return 0;
 }
-
-
-
-
-
-
-
-
-
-

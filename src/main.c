@@ -12,7 +12,7 @@
 		return 1;
 	};
 	
-	size_t alloc = 0;
+	size_t Alloc = 0;
 
 	for(size_t i = 0; i < k->size; i++)
 	{
@@ -44,31 +44,13 @@
 		printf("[%zu] capacity: %zu\n", i, (C)->cap);
 
 		printf("------------------------------------\n");
-		alloc += C->cap;
+		Alloc += C->cap;
 	}	
 
-	printf("Total allocated mem: %zu\n", alloc); 
+	printf("Total Allocated mem: %zu\n", Alloc); 
 */
 
 int Copy(char *i, char *o);
-
-void FillLines(Lines *lines, char c)
-{	
-	// Hand the func to map.
-	void fillLine(Line *line) {
-		// Fill with char c and terminate.
-		for(size_t it = 0; it < line->cap; it++)
-		{
-			line->content[it] = c;
-			line->size++;
-		}
-
-		terminate(line->content, line->size);
-	}
-
-	map(lines, fillLine);
-}
-
 
 void callback(Line *line)
 {
@@ -79,13 +61,15 @@ void callback(Line *line)
 int main()
 {	
 	// Open files.
-	Lines lines = AllocLines(12, 3);
-	
+	Lines *lines = AllocLines(1000, 4);
+
 	// Fill lines.
-	FillLines(&lines, 'A');
-	map(&lines, callback);
+	
+	FillLines(lines, 'A');
+	Lines_map(lines, callback);
 	
 	//OUT:
+	
 	/*
 		SIZE: 0
 		SIZE: 0
@@ -103,7 +87,7 @@ int Copy(char *i, char *o)
     size_t read = 0;
     int code = 1;
 
-    Chunk *chunk = allocChunk(0);
+    Chunk *chunk = AllocChunk(0);
 
     if((in == NULL) || (out == NULL))
     {
@@ -145,7 +129,7 @@ int main2(void)
     FILE   *out = fopen(OUT, "wb");
     int    code;
     size_t size = 0;
-    Chunk *chunk = allocChunk(0);
+    Chunk *chunk = AllocChunk(0);
     
     if((in == NULL) || (out == NULL) || (chunk == NULL))
     {

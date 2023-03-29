@@ -32,8 +32,8 @@ int    chunk_dump(FILE *Stream, Chunk *chunk);
 int    chunks_dump(FILE *Stream, Chunks *chunks);
 
 // Allocators. 
-Chunk *allocChunk(size_t cap);
-Chunks *allocChunks(size_t cap, size_t amount);
+Chunk  *AllocChunk(size_t cap);
+Chunks *AllocChunks(size_t cap, size_t amount);
 
 // Util
 long get_file_size(FILE *Stream);
