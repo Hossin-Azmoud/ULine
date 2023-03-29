@@ -1,9 +1,3 @@
-#include <stdbool.h>
-#include <string.h>
-#include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include "ULine.h"
 
 void report_read(Line line)
@@ -244,13 +238,15 @@ int dump_lines(FILE *Stream, Lines *lines)
 {
     if(Stream == NULL)
     {
-	return 1;
+		return 1;
     }
     
-    for(int i = 0; i < lines->size; i++)
+    for(size_t i = 0; i < lines->size; i++)
     {
-	dump_line_into_stream(Stream, &(lines->line_list[i]));
-    }
+		dump_line_into_stream(Stream, &(lines->line_list[i]));    
+	}
+	
+	return 0;
 }
 
 Lines read_lines(FILE *Stream, size_t amount)

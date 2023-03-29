@@ -1,19 +1,89 @@
-#include "ULine.c"
-#include "chunk.c"
+#include "ULine.h"
+#include "chunk.h"
 
-#define IN   "OUT/t.jpg"
-#define OUT  "OUT/t-1.jpg"
-#define TEXT "OUT/test.txt"
+#define IN    "OUT/t.jpg"
+#define OUT   "OUT/t-1.jpg"
+#define TEXT  "OUT/test.txt"
 #define TEXTO "OUT/test-1.txt"
+/*
+	if(k->size > 0) printf("Success:\n");
+	if(k->size == 0) {
+		printf("failure:\n");
+		return 1;
+	};
+	
+	size_t alloc = 0;
+
+	for(size_t i = 0; i < k->size; i++)
+	{
+		Chunk *C = (k->items + i);
+		
+		// Because the bytes are *void then I think I need to convert them into a *char before trying to print(bytes).
+		printf("[%zu] ", i);
+
+		for(size_t j = 0; j < (C->size); j++)
+		{
+			// Test if I can convert void into a char character. 			// I can not :(
+			bool showstat = false;
+
+			void *byte_as_void = ((C)->bytes + j);
+			char byte          = (char) *(byte_as_void);
+			
+			if(showstat)
+			{
+				printf("sizeof(void) = %zu\n", sizeof(void));
+				printf("sizeof(char) = %zu\n", sizeof(char));
+				continue;
+			}
+
+			printf("|%c|", byte);
+
+		}
+
+		printf("[%zu] size: %zu\n", i, (C)->size);
+		printf("[%zu] capacity: %zu\n", i, (C)->cap);
+
+		printf("------------------------------------\n");
+		alloc += C->cap;
+	}	
+
+	printf("Total allocated mem: %zu\n", alloc); 
+*/
 
 int Copy(char *i, char *o);
 
 int main()
 {	
+	// Open files.
+	FILE *in = fopen(TEXT, "r");
+	FILE *out = fopen(TEXTO, "w");
+	
+	if(in == NULL)
+	{
+		fclose(in);
+		fclose(out);
+		return 1;		
+	}
 
-    Copy(IN, OUT);
-    printf("finished!;\n");
-    return 0;
+	Chunks *k =  load_all(in);
+
+	// Copying the loaded data into another file.
+	int code = chunks_dump(out, k);		
+
+	if(code == 0) 
+	{
+		printf("%s -> %s\n", TEXT, TEXTO);
+	}
+	
+	else {
+		printf("%s was not coppied to %s\n", TEXT, TEXTO);
+	}
+
+	fclose(in);
+	fclose(out);
+	free(k);
+
+	return 0;
 }
 
 int Copy(char *i, char *o)
@@ -28,10 +98,10 @@ int Copy(char *i, char *o)
 
     if((in == NULL) || (out == NULL))
     {
-	fclose(in);
-	fclose(out);
-	free(chunk);
-	return 1;
+		fclose(in);
+		fclose(out);
+		free(chunk);
+		return 1;
     }
     
     // Example copy the bytes from in to out.
@@ -39,13 +109,13 @@ int Copy(char *i, char *o)
  // Not thee last chunk.
     {	
     	// Loading.
-	chunk->size = 0;
-	code = load(in, chunk);
-	
-	// Dumping.
-	chunk_dump(out, chunk);	
-	
-	read += chunk->size;
+		chunk->size = 0;
+		code = load(in, chunk);
+		
+		// Dumping.
+		chunk_dump(out, chunk);	
+		
+		read += chunk->size;
 
     }
     
@@ -76,10 +146,6 @@ int main2(void)
     }
     
     // Doc.
-    printf("CAP: %zu\n", chunk->cap);
-    printf("SIZE: %zu\n", chunk->size);
-    printf("CHAR_: %zu\n", chunk->bytes);
-
     // Example copy the bytes from in to out.   
     while((code = load(in, chunk)) != EOF && chunk->size > 0)
     {

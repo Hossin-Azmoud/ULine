@@ -11,19 +11,21 @@
 
 typedef struct Chunk {
     void   *bytes;
+    
     size_t size;
     size_t cap;
 } Chunk;
 
 typedef struct Chunks {
-    Chunk  *chunks;
+    Chunk  *items;
+
     size_t size;
     size_t cap;
 } Chunks;
 
 // Loader.
 int    load(FILE *Stream, Chunk *chunk);
-int    load_all(FILE *Stream, Chunks *chunks);
+Chunks *load_all(FILE *Stream);
 
 // dumpers.
 int    chunk_dump(FILE *Stream, Chunk *chunk);
@@ -31,9 +33,10 @@ int    chunks_dump(FILE *Stream, Chunks *chunks);
 
 // Allocators. 
 Chunk *allocChunk(size_t cap);
-Chunks allocChunks(size_t cap, size_t amount);
+Chunks *allocChunks(size_t cap, size_t amount);
 
 // Util
 long get_file_size(FILE *Stream);
+void report_usage(Chunk *chunk);
 
 #endif // CHUNK_H

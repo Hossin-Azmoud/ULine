@@ -1,3 +1,9 @@
+#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #ifndef ULINE_IMPL
 #define ULINE_IMPL
 

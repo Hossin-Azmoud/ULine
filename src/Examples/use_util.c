@@ -1,4 +1,4 @@
-#include "../ULine.c"
+#include "../ULine.h"
 
 void checkl(Line *line)
 {
@@ -10,24 +10,26 @@ void checkl(Line *line)
 void check(char *a, int len)
 {
     printf("degit count: %i\n", len);
-    size_t i = 0;
-    for(i; i < len; i++)
+    
+	int i = 0;
+	for(; i < len; i++)
     {
-	if(i == 0)
-	    printf("%c ", a[i]);
-	if(i > 0 && i < len - 1)
-	    printf(" %c ", a[i]);
-	if(i == len - 1)
-	    printf(" %c\n", a[i]);
+		if(i == 0)
+			printf("%c ", a[i]);
+		if(i > 0 && i < len - 1)
+			printf(" %c ", a[i]);
+		if(i == len - 1)
+			printf(" %c\n", a[i]);
     }
     
     if(a[i] == EOB)
     {
-	printf("terminated: true\n");
-	return;
-    }
-    
-    printf("terminated: false\n");
+		printf("terminated: true\n");
+		return;
+
+	}
+
+	printf("terminated: false\n");
 }
 
 int main(void)
