@@ -22,7 +22,7 @@
 		printf("[%zu] ", i);
 
 		for(size_t j = 0; j < (C->size); j++)
-		{
+		{:
 			// Test if I can convert void into a char character. 			// I can not :(
 			bool showstat = false;
 
@@ -52,36 +52,45 @@
 
 int Copy(char *i, char *o);
 
+void FillLines(Lines *lines, char c)
+{	
+	// Hand the func to map.
+	void fillLine(Line *line) {
+		// Fill with char c and terminate.
+		for(size_t it = 0; it < line->cap; it++)
+		{
+			line->content[it] = c;
+			line->size++;
+		}
+
+		terminate(line->content, line->size);
+	}
+
+	map(lines, fillLine);
+}
+
+
+void callback(Line *line)
+{
+	printf("content: %s\n", line->content);
+	printf("SIZE: %zu\n", line->size);
+}
+
 int main()
 {	
 	// Open files.
-	FILE *in = fopen(TEXT, "r");
-	FILE *out = fopen(TEXTO, "w");
+	Lines lines = AllocLines(12, 3);
 	
-	if(in == NULL)
-	{
-		fclose(in);
-		fclose(out);
-		return 1;		
-	}
-
-	Chunks *k =  load_all(in);
-
-	// Copying the loaded data into another file.
-	int code = chunks_dump(out, k);		
-
-	if(code == 0) 
-	{
-		printf("%s -> %s\n", TEXT, TEXTO);
-	}
+	// Fill lines.
+	FillLines(&lines, 'A');
+	map(&lines, callback);
 	
-	else {
-		printf("%s was not coppied to %s\n", TEXT, TEXTO);
-	}
-
-	fclose(in);
-	fclose(out);
-	free(k);
+	//OUT:
+	/*
+		SIZE: 0
+		SIZE: 0
+		SIZE: 0
+	*/
 
 	return 0;
 }
@@ -140,17 +149,17 @@ int main2(void)
     
     if((in == NULL) || (out == NULL) || (chunk == NULL))
     {
-	fclose(in);
-	fclose(out);
-	return 1;
+		fclose(in);
+		fclose(out);
+		return 1;
     }
     
     // Doc.
     // Example copy the bytes from in to out.   
     while((code = load(in, chunk)) != EOF && chunk->size > 0)
     {
-	chunk_dump(out, chunk);
-	size += chunk->size;
+		chunk_dump(out, chunk);
+		size += chunk->size;
     }
     
     printf("coppied: %zu bytes -> %s\n", size, OUT); 

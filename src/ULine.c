@@ -1,5 +1,15 @@
 #include "ULine.h"
 
+
+void map(Lines *lines, void (*f)(Line*))
+{
+	for(size_t i = 0; i < lines->cap; i++)
+	{
+		Line *l = (lines->line_list + i);		
+		f(l);
+	}
+}
+
 void report_read(Line line)
 {
     printf("---------------------------------------\n");
@@ -19,7 +29,7 @@ size_t concat(Line *src, Line *dst)
 Line AllocLine(size_t capacity)
 {
     if(capacity == 0){
-	capacity = DEFAULT_LINE_CAP;
+		capacity = DEFAULT_LINE_CAP;
     }
 
     Line line = { 0 };
@@ -219,7 +229,7 @@ Line *read_lines_from_stream_dyn(FILE *Stream, size_t *read)
     
     return Lines;
 }
-
+	
 Lines AllocLines(size_t capacity, size_t count)
 {
     Lines lines = { 0 };

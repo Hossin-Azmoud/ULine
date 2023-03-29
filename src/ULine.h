@@ -26,7 +26,6 @@ typedef struct Lines {
 } Lines;
 
 // TODO: TEST.
-
 // Readers.
 void    line_log(Line *l);
 int	read_line_from_stream(FILE *Stream, Line *l);
@@ -46,13 +45,15 @@ size_t  concat(Line *src, Line *dst);
 Line    linecp(Line *src);
 
 // Util
-int  iota(int i, char *a); // converts Int -> ascii
-int  fota(float f, char *a); // converts Int -> ascii
-void memcheck(Line *l, size_t offset, bool movebuff); // check if the allocated mem in Line->content
-void memcheck_rea(Line *l, size_t offset, bool movebuff);
+int   iota(int i, char *a); // converts Int -> ascii
+int   fota(float f, char *a); // converts Int -> ascii
+void  memcheck(Line *l, size_t offset, bool movebuff); // check if the allocated mem in Line->content
+void  memcheck_rea(Line *l, size_t offset, bool movebuff);
 Line  AllocLine(size_t capacity);
 Lines AllocLines(size_t capacity, size_t count);
 
+// Takes a func f and maps it to every loaded line in the lines struct.
+void  map(Lines *lines, void (*f)(Line*)); // Receive f, a function that takes a line. perfoms ops
 void  terminate(char *buff, size_t index);
 
 #endif // ULINE_IMPL
