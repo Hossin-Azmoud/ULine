@@ -89,17 +89,18 @@ void memcheck_rea(Line *l, size_t offset, bool movebuff)
 }
 
 void memcheck(Line *l, size_t offset, bool movebuff) {
-    
-    if(!movebuff)
+
+
+	if(!movebuff)
     {
 		*l = *AllocLine(l->size + offset);
 		return;
     }
-
-    if(l->cap < (l->size + offset)) {
-	
+	// 64 byte 
+    if(l->cap < (l->size + offset)) 
+	{
 		size_t i              = 0;
-		size_t bytes_to_Alloc = (l->cap + DEFAULT_LINE_CAP);
+		size_t bytes_to_Alloc = (l->cap + DEFAULT_LINE_CAP); // 64 1kb
 		char *tmp             = (char *) malloc(bytes_to_Alloc);
 
 		if(l->size > 0) {

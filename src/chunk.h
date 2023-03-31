@@ -8,17 +8,15 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
-
+#include <string.h>
 typedef struct Chunk {
-    void   *bytes;
-    
+    void   *bytes; 
     size_t size;
     size_t cap;
 } Chunk;
 
 typedef struct Chunks {
     Chunk  *items;
-
     size_t size;
     size_t cap;
 } Chunks;
@@ -38,5 +36,8 @@ Chunks *AllocChunks(size_t cap, size_t amount);
 // Util
 long get_file_size(FILE *Stream);
 void report_usage(Chunk *chunk);
+void  chunk_memcheck(Chunk *chunk, size_t offset, bool movebuff); // check if the allocated mem in Line->content
+
+void  MemGrow(Chunk *chunk, size_t amount);
 
 #endif // CHUNK_H

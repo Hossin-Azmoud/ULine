@@ -35,6 +35,7 @@ Chunks *load_all(FILE *Stream)
 	for(size_t i = 0; i < chunkAmount; i++)
 	{	
 		code = load(Stream, chunks->items + i);
+
 		
 		// if chunks.size == chunks.cap then the memory that was perviously allocated is full.
 		// load returns the amount of bytes it read so, it is like if there is nothing to read, exiting the loop is the most responsible to do.
@@ -133,13 +134,15 @@ Chunk *AllocChunk(size_t cap)
 {
     if(cap == 0)
     {
-		cap = CHUNK_SIZE;
+		cap = CHUNK_SIZE; // 1kb
     }
 
-    Chunk *chunk = malloc(sizeof(Chunk));
-    chunk->cap   = cap;
-    chunk->size  = 0;    
-    chunk->bytes = calloc(cap, sizeof(void));
+    Chunk *chunk = malloc(sizeof(Chunk)); // 1chunk struct
+    
+	chunk->cap   = cap;
+    chunk->size  = 0;
+    
+	chunk->bytes = calloc(cap, sizeof(void)); // 1kb
     // Tested using malloc and memset and it does not set all the values. which is weird!
 
     // chunk->bytes = malloc(cap);
@@ -177,5 +180,36 @@ Chunks *AllocChunks(size_t cap, size_t amount)
     // memset(chunk->bytes, 0, chunk->cap);
     
     return chunks;
+}
 
+
+
+void  MemGrow(Chunk *chunk, size_t amount)
+{
+	size_t New_Capacity   =  (chunk->cap + amount);
+	void   *tmp           =  malloc(New_Capacity);
+
+	if(chunk->size > 0)
+		memcpy(tmp, chunk->bytes, sizeof(chunk->bytes[0]) * chunk->size);
+
+	chunk->bytes = tmp;
+	chunk->cap   = New_Capacity;
+}
+
+void  chunk_memcheck(Chunk *chunk, size_t offset, bool movebuff)
+{
+	// checks for overflow possibility.
+	if(chunk->cap < (chunk->size + offset))
+	{
+		size_t New_Capacity = (chunk->cap + CHUNK_SIZE + offset);
+
+		if(!movebuff)
+		{
+			*chunk     = *AllocChunk(New_Capacity);
+			chunk->cap = New_Capacity; 
+			return;
+		}
+		
+		MemGrow(chunk, New_Capacity);
+	}
 }

@@ -1,10 +1,11 @@
 #include "ULine.h"
 #include "chunk.h"
-
+#include <math.h>
 #define IN    "OUT/t.jpg"
 #define OUT   "OUT/t-1.jpg"
 #define TEXT  "OUT/test.txt"
 #define TEXTO "OUT/test-1.txt"
+
 /*
 	if(k->size > 0) printf("Success:\n");
 	if(k->size == 0) {
@@ -58,26 +59,50 @@ void callback(Line *line)
 	printf("SIZE: %zu\n", line->size);
 }
 
+// b KB mb gb 
+enum UNITS {
+	BYTE = 0,
+	KB   = 666,
+	MB,
+	GB
+} UNITS;
+
+
+int convert(size_t Number, enum UNITS unit)
+{
+	return pow(1000, unit) * Number;
+}
+
+void test_conv()
+{
+	printf("%i\n", 10 ^ 10);
+
+	int kb_in_bytes = convert(1, KB);
+	printf("1kb -> %i byte\n", kb_in_bytes);
+	
+	int mb_in_bytes = convert(1, MB);
+
+	printf("1mb -> %i byte\n", mb_in_bytes);
+	
+	int GB_in_bytes = convert(1, GB);
+	
+	printf("1gb -> %i byte\n", GB_in_bytes);
+}
+
 int main()
 {	
 	// Open files.
-	Lines *lines = AllocLines(1000, 4);
+	Lines *lines = AllocLines(1000, 4); // 4 | 1000 bytes 4kb.
 
 	// Fill lines.
 	
 	FillLines(lines, 'A');
+	
 	Lines_map(lines, callback);
 	
-	//OUT:
-	
-	/*
-		SIZE: 0
-		SIZE: 0
-		SIZE: 0
-	*/
-
 	return 0;
 }
+
 
 int Copy(char *i, char *o)
 {
@@ -85,7 +110,8 @@ int Copy(char *i, char *o)
     FILE   *out = fopen(o, "wb");
     
     size_t read = 0;
-    int code = 1;
+    
+	int code = 1;
 
     Chunk *chunk = AllocChunk(0);
 
@@ -103,11 +129,10 @@ int Copy(char *i, char *o)
     {	
     	// Loading.
 		chunk->size = 0;
-		code = load(in, chunk);
+		code = load(in, chunk);	
 		
 		// Dumping.
 		chunk_dump(out, chunk);	
-		
 		read += chunk->size;
 
     }
@@ -154,3 +179,5 @@ int main2(void)
 
     return  0;
 }
+
+
