@@ -62,9 +62,9 @@ void callback(Line *line)
 // b KB mb gb 
 enum UNITS {
 	BYTE = 0,
-	KB   = 666,
-	MB,
-	GB
+	KB   = 1,
+	MB   = 2,
+	GB   = 3
 } UNITS;
 
 
@@ -102,7 +102,6 @@ int main()
 	
 	return 0;
 }
-
 
 int Copy(char *i, char *o)
 {

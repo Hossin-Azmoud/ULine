@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-Wall -std=c11 -Wextra
 
 # LIBS Compile
-all: read_and_write_chunks readfile read_lines_ use_util writefile alloc
+all: read_and_write_chunks readfile read_lines_ use_util writefile alloc cp
 
 # Compiling the ULine lib.
 ULine.o: ../ULine.c ../ULine.h
@@ -30,9 +30,11 @@ writefile: writefile.c  ULine.o
 
 alloc: alloc.c ULine.o chunk.o
 	$(CC) $(CFLAGS) -o $@ $^
+
+cp: cp.c chunk.o
+	$(CC) $(CFLAGS) -o $@ $^
 	move *.exe ./bin
 
 clean:
 	del *.o
 	del .\bin\*.exe
-
